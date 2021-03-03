@@ -4,6 +4,17 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../pages/Home";
+import { createStackNavigator } from '@react-navigation/stack';
+import RegisterScreen from "../pages/Register";
+import SigninScreen from "../pages/Signin";
+import SavedScreen from "../pages/Saved";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+var isLoggedIn = false;
+
+
+
 
 function ExploreScreen() {
   return (
@@ -13,19 +24,13 @@ function ExploreScreen() {
   );
 }
 
-function SavedScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Saved!</Text>
-    </View>
-  );
-}
+
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
+    
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -47,15 +52,46 @@ export default function App() {
           activeTintColor: "#007AFF",
           inactiveTintColor: "gray",
         }}
+        
       >
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ tabBarBadge: 3 }}
+        <Tab.Screen name="Home" 
+        component={HomeScreen} 
+        initialParams={{ name: 42 }}
         />
-        <Tab.Screen name="Explore" component={ExploreScreen} />
-        <Tab.Screen name="Saved" component={SavedScreen} />
+        <Tab.Screen name="Explore" 
+        component={ExploreScreen} 
+        options={{ title: 'Explore' }}
+        />
+        <Tab.Screen name="Saved" 
+        component={SavedScreen} 
+        listeners={({ navigation, route }) => ({
+          tabPress: e => {
+      // Prevent default action
+      
+      e.preventDefault();
+
+    
+
+        try {
+          AsyncStorage.getItem('@user_key',(err,result) => {
+         console.log(result);
+         if(result !== null) {
+            isLoggedIn = true;
+          }else{
+            isLoggedIn = false;
+          }
+          })
+
+          
+        } catch(e) {
+          // error reading value
+        }
+      
+
+      navigation.navigate(isLoggedIn ? 'Saved' : 'Signin');
+    },
+  })}
+        />
       </Tab.Navigator>
-    </NavigationContainer>
   );
 }
