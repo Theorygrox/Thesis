@@ -1,15 +1,11 @@
 import { StyleSheet, Text, View, Image } from "react-native";
-import Header from "../components/Header";
 import { SearchBar } from 'react-native-elements';
-import Footer from "../components/Footer";
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from "../components/Button";
 
 
-export default function SavedScreen({navigation}) {
-
-  const [count, setCount] = useState(0);
+export default function SavedScreen({ navigation }) {
 
 
   return (
@@ -21,19 +17,19 @@ export default function SavedScreen({navigation}) {
       <View>
         <Text style={styles.h1}>Your Lists</Text>
       </View>
-      <View style={{marginTop: 10}}>
-              <Button text="Sign out" onPress={()=>{
-              try {
-                 AsyncStorage.removeItem(
-                  '@user_key'
-                );
-                navigation.navigate('Home');
-              } catch (error) {
-                // Error saving data
-              }
+      <View style={{ marginTop: 10 }}>
+        <Button text="Sign out" onPress={() => {
+          try {
+            AsyncStorage.removeItem(
+              '@user_key'
+            );
+            navigation.navigate('Home');
+          } catch (error) {
+            // Error saving data
+          }
 
-              }}/>
-       </View>
+        }} />
+      </View>
     </View>
   );
 }

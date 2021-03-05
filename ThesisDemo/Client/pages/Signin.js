@@ -1,9 +1,9 @@
 'use strict';
-import React, {Component} from 'react';
-import { View, Text, TextInput, StyleSheet, Image, PixelRatio, Alert, } from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Image, PixelRatio, Alert, } from 'react-native';
 import Button from "../components/Button";
 import axios from 'axios';
-import  qs  from "qs";
+import qs from "qs";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -17,10 +17,10 @@ export default class SigninScreen extends Component {
     };
   }
   render() {
-  
+
     return (
-      
-   
+
+
       <View style={styles.view}>
         <View style={styles.editGroup}>
           <View style={styles.username}>
@@ -28,73 +28,77 @@ export default class SigninScreen extends Component {
               style={styles.edit}
               placeholder="Username"
               placeholderTextColor="#c4c4c4"
-              onChangeText={(username) => this.setState({username})}
-              />
+              onChangeText={(username) => this.setState({ username })}
+            />
           </View>
-          <View style={{height: 1/PixelRatio.get(), backgroundColor:'#c4c4c4'}}/>
-            <View style={styles.password}>
-              <TextInput
+          <View style={{ height: 1 / PixelRatio.get(), backgroundColor: '#c4c4c4' }} />
+          <View style={styles.password}>
+            <TextInput
               style={styles.edit}
               placeholder="Password"
               placeholderTextColor="#c4c4c4"
               secureTextEntry={true}
-              onChangeText={(password) => this.setState({password})}
-              />
-            </View>
-            <View style={{marginTop: 10}}>
-              <Button text="Sign In" onPress={this._handleClick.bind(this)}/>
-            </View>
-            <View style={{marginTop: 10}}>
-            
-            </View>
+              onChangeText={(password) => this.setState({ password })}
+            />
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Button text="Sign In" onPress={this._handleClick.bind(this)} />
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              const { navigate } = this.props.navigation;
+              navigate('Register');
+            }}>
+              <Text style={{ color: "#046ada" }}>Create an Account Now!</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
   }
 
   _handleClick() {
-      
-      const { navigate } = this.props.navigation;
-      let config = {
 
-        headers: {
-              "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-        }
-      };
+    const { navigate } = this.props.navigation;
+    let config = {
 
-      let param = {
-        "username": this.state.username,
-        "password": this.state.password,
-      };
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+      }
+    };
+
+    let param = {
+      "username": this.state.username,
+      "password": this.state.password,
+    };
 
 
-axios.post("http://localhost:5000/signin", qs.stringify(param)).then(res => {
-  
-        switch (res.data) {
-          case "error":
-            Alert.alert("Please make sure the username and password you entered are correct!");
-            console.log(res.data);
-            break;
-          case "success":
-           
-              try {
-                 AsyncStorage.setItem(
-                  '@user_key',
-                  this.state.username,
-                );
-              } catch (error) {
-                // Error saving data
-              }
-            
-            navigate('Saved');
-            console.log(res.data);
-            break;
-        }
+    axios.post("http://localhost:5000/user/signin", qs.stringify(param)).then(res => {
 
-   }).catch(error => {
-        console.log(error);
-  })
-  
+      switch (res.data) {
+        case "error":
+          Alert.alert("Please make sure the username and password you entered are correct!");
+          console.log(res.data);
+          break;
+        case "success":
+          try {
+            AsyncStorage.setItem(
+              '@user_key',
+              this.state.username,
+            );
+          } catch (error) {
+            // Error saving data
+          }
+
+          navigate('Saved');
+          console.log(res.data);
+          break;
+      }
+
+    }).catch(error => {
+      console.log(error);
+    })
+
   }
 }
 
@@ -123,19 +127,16 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 3,
     borderBottomRightRadius: 3,
   },
-  edit:{
+  edit: {
     height: 40,
     fontSize: 13,
     backgroundColor: '#fff',
     paddingLeft: 15,
     paddingRight: 15,
   },
-  h1: {
-    color: "#389BF2",
-    fontSize: 22,
-    marginTop: 100,
-    marginLeft: 36,
-    height: 100,
-    alignItems: "center",
-  }, 
+  button: {
+    alignItems: "flex-start",
+    backgroundColor: 'white',
+    padding: 10,
+  },
 });
