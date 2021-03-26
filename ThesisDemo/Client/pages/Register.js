@@ -8,7 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-
 export default class RegisterScreen extends Component {
   constructor(props) {
     super(props);
@@ -102,7 +101,6 @@ export default class RegisterScreen extends Component {
             // Error saving data
           }
           navigate('Saved');
-          console.log(res.data);
           break;
       }
 

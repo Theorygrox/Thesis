@@ -62,12 +62,13 @@ export default function App() {
                 } else {
                   isLoggedIn = false;
                 }
+                navigation.navigate(isLoggedIn ? "Saved" : "Signin");
+
               });
             } catch (e) {
               // error reading value
             }
 
-            navigation.navigate(isLoggedIn ? "Saved" : "Signin");
           },
         })}
       />

@@ -13,10 +13,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import axios from "axios";
 import { createStackNavigator } from "@react-navigation/stack";
-
-import Header from "../components/Header";
-
-const Stack = createStackNavigator();
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class Home extends React.Component {
   constructor(props) {
@@ -29,23 +26,63 @@ class Home extends React.Component {
     };
   }
 
+  CheckRegion() {
+    var region = { Name: "Global" };
+    AsyncStorage.getItem("region", (err, result) => {
+      if (result !== null) {
+        //console.log(result);
+        region = { Name: result };
+        axios
+          .post("http://localhost:5000/whoData/fetch", region)
+          .then((response) => {
+            //handle success
+            //console.log(response);
+            this.setState({
+              region: response.data.Name,
+              total: response.data["Cases - cumulative total"],
+              newCases:
+                response.data["Cases - newly reported in last 24 hours"],
+              death: response.data["Deaths - cumulative total"],
+            });
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+      } else {
+        axios
+          .post("http://localhost:5000/whoData/fetch", region)
+          .then((response) => {
+            //handle success
+            console.log(response.data);
+            this.setState({
+              region: response.data.Name,
+              total: response.data["Cases - cumulative total"],
+              newCases:
+                response.data["Cases - newly reported in last 24 hours"],
+              death: response.data["Deaths - cumulative total"],
+            });
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+      }
+    });
+  }
+
   componentDidMount() {
-    axios
-      .get("http://192.168.4.23:5000/data/")
-      .then((response) => {
-        // handle success
-        console.log(response.data[0].region);
-        this.setState({
-          region: response.data[0].region,
-          total: response.data[0].total,
-          newCases: response.data[0].newCases,
-          death: response.data[0].death,
-        });
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
+    this._unsubscribe = this.props.navigation.addListener("focus", () => {
+      // do something
+      this.CheckRegion();
+    });
+    this.CheckRegion();
+    // this.props.navigation.addListener("willFocus", this.CheckRegion);
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
+    AsyncStorage.removeItem("region");
   }
 
   render() {
@@ -99,7 +136,7 @@ class Home extends React.Component {
                 <View style={styles.MCFPictureContainer}>
                   <TouchableOpacity
                     onPress={() => {
-                      Linking.openURL("https://google.com");
+                      navigate("DetailPage");
                     }}
                   >
                     <Image
@@ -196,23 +233,24 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     width: "100%",
+
     justifyContent: "space-between",
     height: 70,
   },
   DBTitleTextContainer: {
     alignItems: "flex-start",
     justifyContent: "center",
-    width: "40%",
+    width: "70%",
     height: 30,
   },
   DBTitleText: {
-    fontSize: 22,
+    fontSize: 20,
     color: "#707070",
   },
   DBButtonContainer: {
     alignItems: "flex-end",
     justifyContent: "center",
-    width: "50%",
+    width: "30%",
     height: 30,
   },
   DBButton: {

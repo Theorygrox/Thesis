@@ -8,6 +8,8 @@ import RegisterScreen from "../pages/Register";
 import SigninScreen from "../pages/Signin";
 import Footer from "./Footer";
 import ChangeRegion from "../pages/ChangeRegion";
+import DetailPage from "../pages/DetailPage";
+
 
 function getHeaderTitle(route) {
   const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
@@ -33,15 +35,24 @@ export default function Router() {
           component={Footer}
           options={({ route }) => ({
             headerTitle: getHeaderTitle(route),
+            headerStyle: {
+              backgroundColor: "#007AFF",
+            },
+            headerTitleStyle: {
+              color: "white",
+              fontSize: 28,
+              fontWeight: "bold",
+            },
           })}
         />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen
           name="Signin"
           component={SigninScreen}
-          // options={{ headerShown: false }}
+        // options={{ headerShown: false }}
         />
         <Stack.Screen name="ChangeRegion" component={ChangeRegion} />
+        <Stack.Screen name="DetailPage" component={DetailPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

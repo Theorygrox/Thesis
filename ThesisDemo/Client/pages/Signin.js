@@ -7,6 +7,7 @@ import qs from "qs";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+
 export default class SigninScreen extends Component {
   constructor(props) {
     super(props);
@@ -87,11 +88,10 @@ export default class SigninScreen extends Component {
               this.state.username,
             );
           } catch (error) {
-            // Error saving data
+            console.log(error);
           }
 
-          navigate('Saved');
-          console.log(res.data);
+          navigate('Saved', { paramName: 'value' });
           break;
       }
 
