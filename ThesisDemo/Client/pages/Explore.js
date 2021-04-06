@@ -14,7 +14,6 @@ import * as Location from "expo-location";
 
 import { locations } from "../Data/Data";
 
-Geocoder.init("AIzaSyBWBeHKX8KpmT3wrqMDPZUN6qIGTps7Lgg");
 
 
 
@@ -398,7 +397,7 @@ const Explore = ({ navigation }) => {
           fetchDetails={true}
           onPress={(details) => {
 
-            Geocoder.init("AIzaSyBWBeHKX8KpmT3wrqMDPZUN6qIGTps7Lgg");
+
 
             Geocoder.from(details.description)
               .then((json) => {
@@ -419,7 +418,7 @@ const Explore = ({ navigation }) => {
               .catch((error) => console.warn(error));
           }}
           query={{
-            key: "AIzaSyBWBeHKX8KpmT3wrqMDPZUN6qIGTps7Lgg",
+            key: "",
             language: "en",
           }}
         />
