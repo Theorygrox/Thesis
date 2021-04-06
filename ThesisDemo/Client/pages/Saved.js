@@ -1,11 +1,11 @@
-import { StyleSheet, SectionList, Text, View, Image, Alert } from "react-native";
-import { SearchBar } from 'react-native-elements';
+import { StyleSheet, SectionList, Text, View, Image, Alert, Linking } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from "../components/Button";
 import axios from 'axios';
 import qs from "qs";
 import React, { Component } from 'react';
 import { Ionicons } from "@expo/vector-icons";
+import { locations } from "../Data/Data";
 
 
 export default class SavedScreen extends Component {
@@ -69,7 +69,7 @@ export default class SavedScreen extends Component {
     let iconName, color;
 
     switch (title) {
-      case "policies":
+      case "countries":
         iconName = "md-star-outline";
         color = "#F9B110";
         break;
@@ -79,14 +79,9 @@ export default class SavedScreen extends Component {
         color = "#E02B2B";
         break;
 
-      case "flights":
+      case "travels":
         iconName = "ios-paper-plane-outline";
         color = "#BFFFFF";
-        break;
-
-      case "labeled":
-        iconName = "ios-bookmark-outline";
-        color = "#389BF2";
         break;
 
     }
@@ -104,7 +99,12 @@ export default class SavedScreen extends Component {
 
     return <View style={styles.deletelist}>
       <View >
-        <Text style={styles.item}>{item}
+        <Text
+          onPress={() => {
+            this.showPage(item, section.title)
+          }}
+
+          style={styles.item}>{item}
         </Text>
       </View>
       <View >
@@ -120,7 +120,6 @@ export default class SavedScreen extends Component {
 
   deleteSave(item, section) {
 
-    const { navigate } = this.props.navigation;
     AsyncStorage.getItem("@user_key", (err, username) => {
 
 
@@ -150,6 +149,53 @@ export default class SavedScreen extends Component {
 
   }
 
+  showPage(item, section) {
+
+    const { navigate } = this.props.navigation;
+
+    switch (section) {
+      case "countries":
+        AsyncStorage.setItem("region", item);
+        navigate("Home");
+
+        break;
+
+      case "favorites":
+
+        for (const value of locations) {
+          if (value.title === item) {
+            Linking.openURL(
+              value.link
+            );
+          }
+        }
+
+        break;
+
+      case "travels":
+
+        let param = {
+          "travels": item
+        };
+        axios.post("http://localhost:5000/user/assessment", qs.stringify(param)).then(res => {
+
+          if (res.data) {
+            Alert.alert("The newly reported cases in last 7 days per 100000 population:",
+              res.data[0].Name + " : " + res.data[0]["Cases - newly reported in last 7 days per 100000 population"] + " | " +
+              res.data[1].Name + " : " + res.data[1]["Cases - newly reported in last 7 days per 100000 population"]
+            )
+
+          }
+
+        }).catch(error => {
+          console.log(error);
+        })
+
+        break;
+    }
+
+  }
+
   render() {
     const { navigate } = this.props.navigation;
     const SectionListItemSeparator = () => {
@@ -167,24 +213,19 @@ export default class SavedScreen extends Component {
 
     return (
       <View style={styles.container}>
-        <SearchBar
-          placeholder="Search"
-          platform="ios"
-        />
         <View>
           <Text style={styles.h1}>Your Lists</Text>
         </View>
-        <View style={styles.container}>
-          <SectionList
-            sections={this.state.list}
-            renderItem={({ item, section }) => this.deletelist(item, section)}
-            renderSectionHeader={({ section }) => this.Checkicon(section.title)}
+        <SectionList
+          sections={this.state.list}
+          renderItem={({ item, section }) => this.deletelist(item, section)}
+          renderSectionHeader={({ section }) => this.Checkicon(section.title)}
 
-            SectionSeparatorComponent={SectionListItemSeparator}
-            ItemSeparatorComponent={ItemListItemSeparator}
-            keyExtractor={(item, index) => index}
-          />
-        </View>
+          SectionSeparatorComponent={SectionListItemSeparator}
+          ItemSeparatorComponent={ItemListItemSeparator}
+          keyExtractor={(item, index) => index}
+        />
+
 
         <View style={{ marginTop: 10 }}>
           <Button text="Sign out" onPress={() => {
@@ -216,7 +257,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginTop: 22,
     marginLeft: 36,
-    marginBottom: 22,
   },
   sectionHeader: {
     justifyContent: "center",
@@ -226,18 +266,15 @@ const styles = StyleSheet.create({
     paddingLeft: 55,
     fontSize: 17,
     color: '#707070',
-    paddingTop: 5,
-    paddingBottom: 5,
-
 
   },
 
   header: {
-    paddingTop: 25,
+    paddingTop: 14,
     paddingLeft: 20,
     paddingRight: 10,
-    paddingBottom: 2,
-    marginVertical: 8
+    paddingBottom: 10,
+    backgroundColor: "white"
   },
   ItemSeparatorStyle: {
     height: 0.9,
@@ -251,12 +288,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#C8C8C8',
     marginLeft: "5%"
   },
-  delete: {
-    marginLeft: 200,
-  },
   deletelist: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: 20,
+    paddingRight: 35,
+    alignItems: "center",
+    height: 40
   }
 });

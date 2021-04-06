@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import {
   ScrollView,
@@ -9,7 +9,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/core";
+import Geocoder from "react-native-geocoding";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
 
 const Separator = () => {
   return <View style={styles.separator}></View>;
@@ -21,11 +23,20 @@ export default class changeRegion extends Component {
     this.state = {
       region: "error",
       backgroundColor: "white",
+      historyData: [],
+      location: {},
+      errorMessage: "",
     };
     //this.DrawBlocks = this.DrawBlocks.bind(this);
   }
 
   componentDidMount() {
+    AsyncStorage.getItem("historyData", (err, result) => {
+      if (result !== null) {
+        let Data = JSON.parse(result);
+        this.setState({ historyData: Data });
+      }
+    });
     axios
       .get("http://localhost:5000/whoData/")
       .then((res) => {
@@ -36,20 +47,57 @@ export default class changeRegion extends Component {
         // handle error
         console.log(error);
       });
+    (async () => {
+      const { status } = await Permissions.askAsync(Permissions.LOCATION);
+      console.log("1");
+
+      if (status !== "granted") {
+        console.log("Permission not granted!");
+
+        this.setState({
+          errorMessage: "Permission not granted!",
+        });
+      }
+
+      const location = await Location.getCurrentPositionAsync();
+      console.log("2");
+
+      this.setState({
+        location: location,
+      });
+    })();
   }
 
   handleRegion(e) {
-    // this.setState({ backgroundColor: "gray" });
-    // setTimeout(() => {
-    //   this.setState({ backgroundColor: "white" });
-    // }, 100);
-    // console.log(e);
+    var localHistoryData = e;
+    AsyncStorage.getItem("historyData", (err, result) => {
+      if (result !== null) {
+        let countries = JSON.parse(result);
+        if (!countries.includes(localHistoryData)) {
+          countries.push(localHistoryData);
+
+          if (countries.length > 5) {
+            countries.shift();
+            AsyncStorage.setItem("historyData", JSON.stringify(countries));
+          } else {
+            AsyncStorage.setItem("historyData", JSON.stringify(countries));
+          }
+        } else {
+          console.log("here");
+        }
+      } else {
+        let container = [];
+        container.push(localHistoryData);
+        AsyncStorage.setItem("historyData", JSON.stringify(container));
+      }
+    });
+
     AsyncStorage.setItem("region", e);
     const { navigate } = this.props.navigation;
     navigate("Home");
   }
 
-  DrawBlocks() {
+  DrawDataBlocks() {
     if (this.state.whoData) {
       return this.state.whoData.map((currentData) => {
         return (
@@ -66,26 +114,86 @@ export default class changeRegion extends Component {
       });
     }
   }
+
+  handleHistory(e) {
+    //console.log(e);
+    AsyncStorage.getItem("historyData", (err, result) => {
+      if (result !== null) {
+        let data = JSON.parse(result);
+        for (let value of data) {
+          if (value === e) {
+            data.splice(data.indexOf(value), 1);
+          }
+        }
+        AsyncStorage.setItem("historyData", JSON.stringify(data));
+        this.setState({ historyData: data });
+      }
+    });
+    //syncStorage.removeItem("historyData");
+  }
+
+  DrawHistroyBlocks() {
+    return this.state.historyData.map((currentData) => {
+      return (
+        <Fragment key={currentData}>
+          <View style={styles.subBlock}>
+            <View style={styles.SBPart1}>
+              <MaterialIcons name="history" size={20} color="#707070" />
+              <Text
+                style={styles.text}
+                onPress={this.handleRegion.bind(this, currentData)}
+              >
+                {" "}
+                {currentData}
+              </Text>
+            </View>
+            <View style={styles.SBPart2}>
+              <TouchableOpacity
+                onPress={this.handleHistory.bind(this, currentData)}
+              >
+                <Text style={styles.historyButton}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Separator />
+        </Fragment>
+      );
+    });
+  }
+
+  GetLocation = () => {
+    var location = this.state.location;
+    //console.log(location);
+    if (location.coords !== undefined) {
+      Geocoder.init("AIzaSyBWBeHKX8KpmT3wrqMDPZUN6qIGTps7Lgg");
+
+      Geocoder.from(location.coords.latitude, location.coords.longitude)
+        .then((json) => {
+          console.log("3");
+          var addressComponent = json.results[0].address_components.filter(
+            (name) => name.types[0] === "country"
+          )[0].long_name;
+          AsyncStorage.setItem("region", addressComponent);
+          const { navigate } = this.props.navigation;
+          navigate("Home");
+        })
+        .catch((error) => console.warn(error));
+    }
+  };
+
   render() {
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.currentBlock}>
-          <Ionicons name="location-outline" size={20} color="#707070" />
-          <Text style={styles.text}> Current Location</Text>
-        </View>
-        <View style={styles.historyBlock}>
-          <View style={styles.subBlock}>
-            <MaterialIcons name="history" size={20} color="#707070" />
-            <Text style={styles.text}> Iceland</Text>
+        <TouchableOpacity onPress={this.GetLocation}>
+          <View style={styles.currentBlock}>
+            <Ionicons name="location-outline" size={20} color="#707070" />
+            <Text style={styles.text}> Current Location</Text>
           </View>
-          <Separator />
-          <View style={styles.subBlock}>
-            <MaterialIcons name="history" size={20} color="#707070" />
-            <Text style={styles.text}> Finland</Text>
-          </View>
-        </View>
+        </TouchableOpacity>
 
-        <View style={styles.listBlock}>{this.DrawBlocks()}</View>
+        <View style={styles.historyBlock}>{this.DrawHistroyBlocks()}</View>
+
+        <View style={styles.listBlock}>{this.DrawDataBlocks()}</View>
 
         <Separator />
       </ScrollView>
@@ -94,6 +202,11 @@ export default class changeRegion extends Component {
 }
 
 const styles = StyleSheet.create({
+  historyButton: {
+    fontSize: 16,
+    color: "#5EADF2",
+  },
+
   container: {
     flex: 1,
   },
@@ -125,7 +238,22 @@ const styles = StyleSheet.create({
     height: 40,
     flexDirection: "row",
     alignItems: "center",
+    paddingRight: 20,
     paddingLeft: 20,
+  },
+  SBPart1: {
+    width: "50%",
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  SBPart2: {
+    width: "50%",
+    height: 40,
+
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   listBlock: {
     marginTop: 20,

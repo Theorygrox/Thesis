@@ -3,10 +3,9 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  policies: [String],
+  countries: [String],
   favorites: [String],
-  flights: [String],
-  labeled: [String]
+  travels: [String]
 })
 const UserModel = mongoose.model('newUser', userSchema);
 

@@ -54,7 +54,6 @@ class Home extends React.Component {
           .post("http://localhost:5000/whoData/fetch", region)
           .then((response) => {
             //handle success
-            console.log(response.data);
             this.setState({
               region: response.data.Name,
               total: response.data["Cases - cumulative total"],
@@ -77,7 +76,6 @@ class Home extends React.Component {
       this.CheckRegion();
     });
     this.CheckRegion();
-    // this.props.navigation.addListener("willFocus", this.CheckRegion);
   }
 
   componentWillUnmount() {
@@ -136,7 +134,9 @@ class Home extends React.Component {
                 <View style={styles.MCFPictureContainer}>
                   <TouchableOpacity
                     onPress={() => {
-                      navigate("DetailPage");
+                      navigate("DetailPage", {
+                        itemId: 11,
+                      });
                     }}
                   >
                     <Image
@@ -158,41 +158,74 @@ class Home extends React.Component {
               </View>
               <View style={styles.MainContentSub}>
                 <View style={styles.MCSubParts}>
-                  <Image
-                    source={require("../assets/2.jpg")}
-                    style={styles.Picture}
-                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigate("DetailPage", {
+                        itemId: 12,
+                      });
+                    }}
+                  >
+                    <Image
+                      source={require("../assets/2.jpg")}
+                      style={styles.Picture}
+                    />
+                  </TouchableOpacity>
                   <Text style={styles.MCSubPartsSource}>CDC</Text>
                   <Text style={styles.MCSubPartsTitle}>
                     Domestic Travel During the COVID-19 ...
                   </Text>
                 </View>
                 <View style={styles.MCSubParts}>
-                  <Image
-                    source={require("../assets/4.jpg")}
-                    style={styles.Picture}
-                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigate("DetailPage", {
+                        itemId: 11,
+                      });
+                    }}
+                  >
+                    <Image
+                      source={require("../assets/4.jpg")}
+                      style={styles.Picture}
+                    />
+                  </TouchableOpacity>
                   <Text style={styles.MCSubPartsSource}>CS.MFA.GOV.CN</Text>
                   <Text style={styles.MCSubPartsTitle}>
                     Exit and Entry Administration Law ...
                   </Text>
                 </View>
                 <View style={styles.MCSubParts}>
-                  <Image
-                    source={require("../assets/5.jpg")}
-                    style={styles.Picture}
-                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigate("DetailPage", {
+                        itemId: 11,
+                      });
+                    }}
+                  >
+                    <Image
+                      source={require("../assets/5.jpg")}
+                      style={styles.Picture}
+                    />
+                  </TouchableOpacity>
+
                   <Text style={styles.MCSubPartsSource}>CDC</Text>
                   <Text style={styles.MCSubPartsTitle}>
                     Domestic Travel During the COVID-19 ...
                   </Text>
                 </View>
                 <View style={styles.MCSubParts}>
-                  <Image
-                    source={require("../assets/1.jpg")}
-                    style={styles.Picture}
-                  />
-                  <Text style={styles.MCSubPartsSource}>CDC</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigate("PolicyPage", {
+                        countryName: "China",
+                      });
+                    }}
+                  >
+                    <Image
+                      source={require("../assets/1.jpg")}
+                      style={styles.Picture}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.MCSubPartsSource}>123123</Text>
                   <Text style={styles.MCSubPartsTitle}>
                     Domestic Travel During the COVID-19 ...
                   </Text>
@@ -233,7 +266,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     width: "100%",
-
     justifyContent: "space-between",
     height: 70,
   },

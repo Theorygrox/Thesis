@@ -6,6 +6,7 @@ export const locations = [
     latitude: 42.34766702277549,
     longitude: -71.0746884558293,
     calloutImage: "https://tongjiang.neocities.org/2020fall/1.jpg",
+    link: "https://en.wikipedia.org/wiki/Back_Bay,_Boston"
   },
   {
     title: "Yarlung Tsangpo Grand Canyon",
@@ -14,6 +15,7 @@ export const locations = [
     latitude: 29.506880322282836,
     longitude: 94.8493118873315,
     calloutImage: "https://tongjiang.neocities.org/2020fall/2.jpg",
+    link: "https://en.wikipedia.org/wiki/Yarlung_Tsangpo_Grand_Canyon"
   },
 
   {
@@ -23,6 +25,7 @@ export const locations = [
     description:
       "London is the capital and largest city of England and the United Kingdom. The city stands on the River Thames in the south-east of England, at the head of its 50-mile (80 km) estuary leading to the North Sea. London has been a major settlement for two millennia. Londinium was founded by the Romans.",
     calloutImage: "https://tongjiang.neocities.org/2020fall/3.jpg",
+    link: "https://en.wikipedia.org/wiki/London"
   },
   {
     title: "Mount Fuji",
@@ -31,6 +34,7 @@ export const locations = [
     description:
       "Mount Fuji located on the island of Honshū, is the highest mountain in Japan, standing 3,776.24 m (12,389.2 ft). It is the second-highest volcano located on an island in Asia (after Mount Kerinci on the island of Sumatra), and seventh-highest peak of an island on Earth.",
     calloutImage: "https://tongjiang.neocities.org/2020fall/4.jpg",
+    link: "https://en.wikipedia.org/wiki/Mount_Fuji"
   },
   {
     title: "Manaus",
@@ -39,6 +43,7 @@ export const locations = [
     description:
       "Manaus (/mɑːˈnaʊs/; Portuguese: [mɐˈnaws, mɐˈnawʃ, maˈnaws]) is the capital and largest city of the Brazilian state of Amazonas. It is the seventh-largest city in Brazil, with an estimated 2020 population of 2,219,580 distributed over a land area of about 11,401 km2 (4,402 sq mi).",
     calloutImage: "https://tongjiang.neocities.org/2020fall/5.jpg",
+    link: "https://en.wikipedia.org/wiki/Manaus"
   },
   {
     title: "Mount Kilimanjaro",
@@ -47,5 +52,6 @@ export const locations = [
     description:
       "Mount Kilimanjaro (/ˌkɪlɪmənˈdʒɑːroʊ/) is a dormant volcano in Tanzania. It has three volcanic cones: Kibo, Mawenzi and Shira. It is the highest mountain in Africa and the highest single free-standing mountain in the world: 5,895 metres (19,341 ft) above sea level and about 4,900 metres (16,100 ft) above its plateau base.",
     calloutImage: "https://tongjiang.neocities.org/2020fall/8.jpg",
+    link: "https://en.wikipedia.org/wiki/Mount_Kilimanjaro"
   },
 ];

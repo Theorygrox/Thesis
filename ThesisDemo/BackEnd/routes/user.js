@@ -1,5 +1,7 @@
 const router = require("express").Router();
 let UserModel = require("../models/userdata");
+let whoData = require("../models/whoData.model");
+
 
 router.route("/register").post((req, res) => {
 
@@ -15,10 +17,9 @@ router.route("/register").post((req, res) => {
           {
             username: req.body.username,
             password: req.body.password,
-            policies: [],
+            countries: [],
             favorites: [],
-            flights: [],
-            labeled: []
+            travels: []
           },
         ];
         UserModel.create(newUser, (err) => {
@@ -57,7 +58,7 @@ router.route("/savedlist").post((req, res) => {
     (err, data) => {
       if (err) console.log(err);
       if (data) {
-        var result = JSON.stringify(data, ['policies', 'favorites', 'flights', 'labeled']);
+        var result = JSON.stringify(data, ['countries', 'favorites', 'travels']);
         res.send(result);
         console.log(result);
 
@@ -75,9 +76,9 @@ router.route("/savedlist").post((req, res) => {
 //   if (err) console.log(err);
 // });
 
-router.route("/addlist").post((req, res) => {
+router.route("/addcountries").post((req, res) => {
 
-  UserModel.updateOne({ username: req.body.username }, { $addToSet: { favorites: req.body.data } }, (err, data) => {
+  UserModel.updateOne({ username: req.body.username }, { $addToSet: { countries: req.body.country } }, (err, data) => {
     if (err) console.log(err);
     if (data) {
       res.send("success");
@@ -85,6 +86,48 @@ router.route("/addlist").post((req, res) => {
   });
 
 });
+
+router.route("/addfavorites").post((req, res) => {
+
+  UserModel.updateOne({ username: req.body.username }, { $addToSet: { favorites: req.body.favorites } }, (err, data) => {
+    if (err) console.log(err);
+    if (data) {
+      res.send("success");
+    }
+  });
+
+});
+
+
+router.route("/addtravels").post((req, res) => {
+
+  var data = req.body.start + " --> " + req.body.end;
+  UserModel.updateOne({ username: req.body.username }, { $addToSet: { travels: data } }, (err, data) => {
+    if (err) console.log(err);
+    if (data) {
+      res.send("success");
+    }
+  });
+
+});
+
+
+
+router.route("/assessment").post((req, res) => {
+
+  var countries = req.body.travels.split(" --> ");
+
+  whoData
+    .find({ Name: { $in: countries } })
+    .then((data) => {
+      console.log(data);
+      res.send(data);
+
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+
+});
+
 
 router.route("/deletelist").post((req, res) => {
 
