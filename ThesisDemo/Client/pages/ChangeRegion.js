@@ -165,7 +165,7 @@ export default class changeRegion extends Component {
     var location = this.state.location;
     //console.log(location);
     if (location.coords !== undefined) {
-      Geocoder.init("AIzaSyBWBeHKX8KpmT3wrqMDPZUN6qIGTps7Lgg");
+
 
       Geocoder.from(location.coords.latitude, location.coords.longitude)
         .then((json) => {
